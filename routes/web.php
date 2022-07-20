@@ -24,3 +24,6 @@ Route::get('authorsBooks/{author_id}', [BookController::class, 'authorsBooks'])-
 // Traz informações do livro escolhido
 Route::get('bookInfo/{book_id}', [BookController::class, 'bookInfo'])->name('bookInfo');
 // ======================================================================================================
+
+// Testes de envio de arquivo via fetch
+Route::post('sendFile', [BookController::class, 'sendFile']);

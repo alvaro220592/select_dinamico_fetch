@@ -6,13 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">    
 
     {{-- Bootstrap CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     
     {{-- Bootstrap icons --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.0/font/bootstrap-icons.css">
+
+    {{-- <link href="css/sweetalert2.css" rel="stylesheet"> --}}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 </head>
 <body>
@@ -51,6 +54,10 @@
                 {{-- Será preenchido via JS --}}
             </ul>
         </div>
+
+        <div>
+            <button type="button" class="btn btn-success" onclick="modalFile()">abrir</button>
+        </div>
     </div>
     
     {{-- Bootstrap JS --}}
@@ -60,9 +67,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
     {{-- Sweet Alert --}}
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- tema --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" />
+    {{-- funcionalidade --}}
+    {{-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+    <script src="js/sweetalert2.all.min.js"></script>
 
-    <script>
+    
+    
+    <script>        
 
         // Chamando a função q traz todos os autores ao carregar a página
         allAuthors();
@@ -181,10 +194,12 @@
                 confirmButtonText: 'Salvar',
                 cancelButtonText: 'Cancelar',
                 showLoaderOnConfirm: true,
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                },
+                buttonsStyling: false,
                 html: `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none" id="alerta_sucesso">
-                        Cadastro realizado com sucesso!
-                    </div>
                     <label for="firstname" class="text-left">Nome</label>
                     <input type="text" id="firstname" class="form-control mb-3">
 
@@ -261,6 +276,52 @@
             //         })
             //     }
             // })
+        }
+
+        function modalFile(){
+            Swal.fire({
+                title: 'Insira o arquivo',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar',
+                cancelButtonText: 'Cancelar',
+                showLoaderOnConfirm: true,
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                },
+                buttonsStyling: false,
+                html: `
+                    <input type="file" id="arquivo">
+                `,
+                preConfirm: function(result) {
+
+                    let arquivo = document.getElementById('arquivo')
+
+                    let formData = new FormData()
+                    formData.append('arquivo', arquivo.files[0])
+
+                    return new Promise(function(resolve, reject) {
+                        if (result) {
+                            fetch('sendFile', {
+                                method: 'POST',
+                                headers: {
+                                    contentType: false,
+                                    processData: false,
+                                    "X-CSRF-Token": token
+                                },
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data =>{
+                                Swal.fire({
+                                    title: data.resposta[0]
+                                })
+                            })
+                        }
+                    });
+                },
+                allowOutsideClick: () => !this.$swal.isLoading(),
+            })
         }
     </script>
 </body>
