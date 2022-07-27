@@ -27,3 +27,5 @@ Route::get('bookInfo/{book_id}', [BookController::class, 'bookInfo'])->name('boo
 
 // Testes de envio de arquivo via fetch
 Route::post('sendFile', [BookController::class, 'sendFile']);
+
+Route::resource('books', BookController::class);

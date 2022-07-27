@@ -29,4 +29,15 @@ class BookController extends Controller
         return response()->json(['resposta' => $xml->evtMovOpFin->ideDeclarado->tpDeclarado]);
 
     }
+
+    public function store(Request $request){
+        $book = new Book;
+        $book->fill($request->all());
+
+        if($book->save()){
+            return response()->json(['status' => 'ok', 'response' => 'Cadastrado com sucesso']);
+        }else{
+            return response()->json(['status' => 'error', 'response' => 'Erro ao cadastrar']);
+        }
+    }
 }
